@@ -29,9 +29,19 @@ exports.readAll = (callback) => {
       callback(err);
     } else {
       data = _.map(data, (fileName) => {
-        return { id: fileName.slice(0, -4), text: fileName.slice(0, -4) };
+        return new Promise((resolve, reject) => {
+          fs.readFile(path.join(exports.dataDir, fileName), 'utf8', function(err, text) {
+            if (err) {
+              reject(err);
+            } else {
+              resolve({ id: fileName.slice(0, -4), text: text });
+            }
+          });
+        });
       });
-      callback(null, data);
+      Promise.all(data)
+        .then(values => { callback(null, values); })
+        .catch(err => { throw (err); });
     }
   });
 };
