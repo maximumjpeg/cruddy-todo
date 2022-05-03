@@ -8,15 +8,7 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  // folder is dataDir
-  // each entry is its own file, maybe using fs.writeFile()
-  // id is filename, use getNextUniqueId
-  // todo text is only thing in the file
-  // path.join(dataDir/...whatever the file is called from the writeFile function)
-  // DO NOT STORE AN OBJECT
-
-
-  counter.getNextUniqueId(function(err,id) {
+  counter.getNextUniqueId(function(err, id) {
     if (err) {
       throw ('error');
     } else {
@@ -29,16 +21,19 @@ exports.create = (text, callback) => {
       });
     }
   });
-
-
-  // items[id] = text;clear
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  fs.readdir(exports.dataDir, function(err, data) {
+    if (err) {
+      callback(err);
+    } else {
+      data = _.map(data, (fileName) => {
+        return { id: fileName.slice(0, -4), text: fileName.slice(0, -4) };
+      });
+      callback(null, data);
+    }
   });
-  callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
