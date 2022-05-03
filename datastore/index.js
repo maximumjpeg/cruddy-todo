@@ -8,9 +8,30 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+  // folder is dataDir
+  // each entry is its own file, maybe using fs.writeFile()
+  // id is filename, use getNextUniqueId
+  // todo text is only thing in the file
+  // path.join(dataDir/...whatever the file is called from the writeFile function)
+  // DO NOT STORE AN OBJECT
+
+
+  counter.getNextUniqueId(function(err,id) {
+    if (err) {
+      throw ('error');
+    } else {
+      fs.writeFile(path.join(exports.dataDir, id + '.txt'), text, function(err) {
+        if (err) {
+          throw ('error');
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
+
+
+  // items[id] = text;clear
 };
 
 exports.readAll = (callback) => {
